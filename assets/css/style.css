@@ -1,0 +1,8 @@
+.d-bg{
+    background-color: #263247;
+}
+@media (min-width: 1200px) {
+    .container {
+        max-width: 2250px;
+    }
+}

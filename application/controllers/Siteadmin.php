@@ -7,6 +7,7 @@ class Siteadmin extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('Admin_model'); 
+        $this->load->model('Blog_model'); 
         $this->load->model('Category_model');
         $this->load->library('session');
         $this->load->helper('url');
