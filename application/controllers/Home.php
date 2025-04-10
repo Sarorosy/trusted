@@ -23,7 +23,7 @@ class Home extends CI_Controller
 
         $config['base_url'] = base_url('home/index'); // URL for pagination links
         $config['total_rows'] = $this->Blog_model->count_all_blogs(); // Total number of blogs
-        $config['per_page'] = 1; // Number of blogs per page
+        $config['per_page'] = 4; // Number of blogs per page
         $config['uri_segment'] = 3; // URL segment for pagination
         $config['use_page_numbers'] = TRUE; // Use page numbers instead of offset
         $config['reuse_query_string'] = TRUE;
@@ -42,9 +42,33 @@ class Home extends CI_Controller
 
         $this->pagination->initialize($config);
 
+        $blogs = $this->Blog_model->get_all_blogs_paginated($config['per_page'], $page);
+        $featured_blogs = $this->Blog_model->get_featured_blogs(); // Get featured blogs
+        $data['featuredposts'] = $featured_blogs; // Get the first featured blog if available
+
+        if ($page > 1) {
+            // If page > 1, return JSON array instead of loading a full page
+            echo json_encode(['blogs' => $blogs]);
+            exit;
+        }
+
         $data['main_content'] = 'home';
-        $data['datas'] = $this->Blog_model->get_all_blogs_paginated($config['per_page'], $page);
+        $data['datas'] = $blogs;
         $data['pagination_links'] = $this->pagination->create_links(); // Generate pagination links
+
+        $this->load->view('template', $data);
+    }
+
+    public function detail($slug)
+    {
+        $blog = $this->Blog_model->get_blog_by_slug($slug);
+
+        if (!$blog) {
+            show_404(); // Show 404 page if blog not found
+        }
+
+        $data['blog'] = $blog;
+        $data['main_content'] = 'blog_detail'; // Load blog detail view
 
         $this->load->view('template', $data);
     }
